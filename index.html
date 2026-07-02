@@ -225,39 +225,6 @@
                 </div>
             </div>
 
-            <!-- AI Prompt Generator Options Card -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-                <h4 class="text-xs font-bold text-slate-700 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-100 pb-2.5">
-                    <i class="fa-solid fa-sliders"></i> 생성 옵션 & 비율 설정
-                </h4>
-                
-                <!-- Aspect Ratio Selector -->
-                <div>
-                    <span class="text-xs font-bold text-slate-500 block mb-2">종횡비 (Aspect Ratio)</span>
-                    <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold">
-                        <button onclick="setRatio('1:1')" id="ratio-1-1" class="ratio-btn py-2 bg-indigo-50 border-2 border-indigo-600 text-indigo-700 rounded-xl">1:1 Square</button>
-                        <button onclick="setRatio('16:9')" id="ratio-16-9" class="ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl">16:9 Wide</button>
-                        <button onclick="setRatio('9:16')" id="ratio-9-16" class="ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl">9:16 Port.</button>
-                        <button onclick="setRatio('4:5')" id="ratio-4-5" class="ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl">4:5 Social</button>
-                    </div>
-                </div>
-
-                <!-- Style Detail Boosters -->
-                <div>
-                    <span class="text-xs font-bold text-slate-500 block mb-2">디테일 부스터 추가</span>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
-                            <input type="checkbox" id="boost-lighting" onchange="updatePromptDisplay()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" checked>
-                            <span class="font-medium text-slate-600">영화적 드라마틱 조명</span>
-                        </label>
-                        <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
-                            <input type="checkbox" id="boost-detail" onchange="updatePromptDisplay()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" checked>
-                            <span class="font-medium text-slate-600">8K 초고화질 디테일</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
             <!-- AI Prompt Terminal Display Card -->
             <div class="bg-slate-900 border border-slate-950 rounded-2xl overflow-hidden shadow-lg flex flex-col">
                 
@@ -271,7 +238,7 @@
                             <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                         </div>
-                        <span class="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-wider">AI Prompt Terminal v1.2</span>
+                        <span class="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-wider">AI Prompt Terminal v1.3</span>
                     </div>
 
                     <!-- Static Empty State -->
@@ -280,7 +247,7 @@
                             <i class="fa-solid fa-code"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-slate-400">조합을 설정한 후 프롬프트 생성 버튼을 누르세요</p>
+                            <p class="text-xs font-semibold text-slate-400">조합을 설정한 후 생성하기 버튼을 누르세요</p>
                             <p class="text-[10px] text-slate-600 mt-1">Midjourney, DALL-E 3 등 모든 모델에 즉시 사용 가능</p>
                         </div>
                     </div>
@@ -335,7 +302,7 @@
                     <!-- Main Draw / Prompt Builder Trigger -->
                     <button id="draw-btn" onclick="generateArt()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-base rounded-xl transition duration-300 shadow-lg shadow-indigo-600/20 flex items-center justify-center space-x-2.5 glow-btn">
                         <i class="fa-solid fa-gears text-lg"></i>
-                        <span>최종 프롬프트 생성 🪄</span>
+                        <span>프롬프트 생성하기 🪄</span>
                     </button>
 
                     <!-- Auxiliary Actions -->
@@ -374,7 +341,6 @@
         const categories = ['who', 'where', 'what', 'mood', 'elements', 'style'];
         let currentTabIdx = 0;
         let currentWhoSub = 'people';
-        let currentRatio = '1:1';
 
         // Selected Elements State (Who and Elements support Multi-selection)
         const selected = {
@@ -386,7 +352,7 @@
             style: null    // Single Object
         };
 
-        // Complete Dataset Definitions (20 items for who subgroups, where, what, elements; 15 for mood, style)
+        // Complete Dataset Definitions (20 items for who subgroups, where, elements; 17 for what; 15 for mood, style)
         const data = {
             who: {
                 people: [
@@ -419,7 +385,7 @@
                     { id: 'a5', emoji: '🦁', name: '사자', enName: 'a majestic golden lion' },
                     { id: 'a6', emoji: '🐰', name: '토끼', enName: 'a tiny bunny rabbit' },
                     { id: 'a7', emoji: '🐻', name: '곰', enName: 'a friendly brown bear' },
-                    { id: 'a8', emoji: ' owls', emoji: '🦉', name: '부엉이', enName: 'a wise forest owl' },
+                    { id: 'a8', emoji: '🦉', name: '부엉이', enName: 'a wise forest owl' },
                     { id: 'a9', emoji: '🐬', name: '돌고래', enName: 'a happy ocean dolphin' },
                     { id: 'a10', emoji: '🐉', name: '용', enName: 'a mythical friendly dragon' },
                     { id: 'a11', emoji: '🐯', name: '호랑이', enName: 'a fierce striped tiger' },
@@ -479,26 +445,23 @@
                 { id: 'w20', emoji: '☁️', name: '구름 위', enName: 'floating high above the sky on soft white clouds' }
             ],
             what: [
-                { id: 'wt1', emoji: '🍎', name: '음식을 먹는', enName: 'eating delicious foods and sweet treats' },
+                { id: 'wt1', emoji: '🏃‍♂️', name: '달리는', enName: 'running joyfully at extreme speed' },
                 { id: 'wt2', emoji: '💃', name: '춤추는', enName: 'dancing with pure excitement and energy' },
-                { id: 'wt3', emoji: '📚', name: '책을 읽는', enName: 'focused on reading an ancient book' },
-                { id: 'wt4', emoji: '🎨', name: '그림을 그리는', enName: 'painting a colorful canvas work of art' },
-                { id: 'wt5', emoji: '💤', name: '잠을 자는', enName: 'sleeping peacefully and dreaming' },
-                { id: 'wt6', emoji: '🏃‍♂️', name: '달리는', enName: 'running at extreme speed' },
-                { id: 'wt7', emoji: '🎸', name: '악기를 연주하는', enName: 'playing a wonderful melody on an instrument' },
-                { id: 'wt8', emoji: '✈️', name: '하늘을 나는', enName: 'flying freely and soaring in the air' },
-                { id: 'wt9', emoji: '📸', name: '사진 찍는', enName: 'capturing photos with a professional camera' },
-                { id: 'wt10', emoji: '🎣', name: '낚시하는', enName: 'quietly fishing on calm water' },
-                { id: 'wt11', emoji: '💻', name: '코딩하는', enName: 'coding furiously on a glowing holographic screen' },
-                { id: 'wt12', emoji: '🧗‍♂️', name: '벽을 오르는', enName: 'boldly climbing a steep structure' },
-                { id: 'wt13', emoji: '🪄', name: '마법을 부리는', enName: 'casting a magical spell with particles of starlight' },
-                { id: 'wt14', emoji: '⚽', name: '축구하는', enName: 'playing a high-stakes competitive soccer game' },
-                { id: 'wt15', emoji: '☕', name: '차 마시는', enName: 'sipping a warm hot tea' },
-                { id: 'wt16', emoji: '🪴', name: '화초 가꾸는', enName: 'gardening and watering beautiful flowers' },
-                { id: 'wt17', emoji: '🫧', name: '비누방울을 부는', enName: 'blowing delicate iridescent shimmering bubbles' },
-                { id: 'wt18', emoji: '🤹', name: '저글링하는', enName: 'expertly juggling colorful glowing spheres' },
-                { id: 'wt19', emoji: '🔍', name: '추리하는', enName: 'investigating and inspecting a clue with a magnifying glass' },
-                { id: 'wt20', emoji: '🤝', name: '악수하는', enName: 'shaking hands with a warm smile' }
+                { id: 'wt3', emoji: '🎤', name: '노래하는', enName: 'singing a beautiful song passionately' },
+                { id: 'wt4', emoji: '🎨', name: '그림 그리는', enName: 'painting a colorful canvas work of art' },
+                { id: 'wt5', emoji: '📚', name: '책 읽는', enName: 'focused on reading an interesting book' },
+                { id: 'wt6', emoji: '😄', name: '웃는', enName: 'laughing and smiling brightly with pure joy' },
+                { id: 'wt7', emoji: '👋', name: '손 흔드는', enName: 'waving hands warmly and greeting friendly' },
+                { id: 'wt8', emoji: '🤸‍♂️', name: '점프하는', enName: 'jumping high in the air with absolute excitement' },
+                { id: 'wt9', emoji: '🪄', name: '마법을 부리는', enName: 'casting a magical spell with glowing sparkles' },
+                { id: 'wt10', emoji: '🪴', name: '꽃에 물 주는', enName: 'watering beautiful blooming flowers gently' },
+                { id: 'wt11', emoji: '🫧', name: '비눗방울을 부는', enName: 'blowing delicate iridescent shimmering bubbles' },
+                { id: 'wt12', emoji: '📸', name: '사진 찍는', enName: 'capturing lovely photos with a vintage camera' },
+                { id: 'wt13', emoji: '⚽', name: '축구하는', enName: 'playing a high-energy fun soccer game' },
+                { id: 'wt14', emoji: '🎸', name: '연주하는', enName: 'playing a wonderful melody on an instrument' },
+                { id: 'wt15', emoji: '🎣', name: '낚시하는', enName: 'quietly fishing on calm sparkling water' },
+                { id: 'wt16', emoji: '🍳', name: '요리하는', enName: 'cooking a delicious meal in a cozy kitchen' },
+                { id: 'wt17', emoji: '🏊', name: '수영하는', enName: 'swimming and splashing in cool refreshing water' }
             ],
             mood: [
                 { id: 'm1', emoji: '🥰', name: '귀여운', enName: 'in a super cute, lovely, and adorable style' },
@@ -557,6 +520,14 @@
                 { id: 's15', emoji: '🎈', name: '페이퍼 크래프트', enName: 'Whimsical 3D layered papercut craft art, textured paper shapes, depth and shadows' }
             ]
         };
+
+        const loadingTexts = [
+            "🔮 마법의 크리스탈을 조율하고 있습니다...",
+            "📐 프롬프트 뼈대 및 조합 분석 구성 중...",
+            "🎨 이미지 구조와 상황 묘사 조화 중...",
+            "✨ 디테일한 빛 조절과 하이라이트 번역 중...",
+            "🌟 거의 완료되었습니다! 마지막 마감 칠 처리 중..."
+        ];
 
         // Custom Toast system
         function showToast(message, isError = false) {
@@ -640,18 +611,20 @@
             });
         }
 
-        // Standard dynamic Grid Button creation
+        // Standard dynamic Grid Button creation with highly visible enlarged emojis
         function createGridButton(category, item, subKey = '') {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = `category-item-btn p-3 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl transition-all duration-200 text-left flex items-center space-x-3 text-xs sm:text-sm font-semibold relative overflow-hidden group text-slate-700 shadow-sm`;
+            // Increased padding from p-3 to p-4, larger gaps and flex sizes
+            btn.className = `category-item-btn p-4 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl transition-all duration-200 text-left flex items-center space-x-4 text-xs sm:text-sm font-semibold relative overflow-hidden group text-slate-700 shadow-sm`;
             btn.setAttribute('data-id', item.id);
             btn.setAttribute('data-category', category);
             if (subKey) btn.setAttribute('data-subkey', subKey);
 
+            // Emojis enlarged dramatically (text-3xl sm:text-4xl) to meet requests
             btn.innerHTML = `
-                <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-200">${item.emoji}</span>
-                <span class="text-slate-600 group-hover:text-slate-900 transition-colors truncate">${item.name}</span>
+                <span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform duration-200 shrink-0">${item.emoji}</span>
+                <span class="text-slate-600 group-hover:text-slate-950 transition-colors truncate font-bold">${item.name}</span>
                 <div class="active-indicator absolute top-1.5 right-1.5 hidden">
                     <span class="flex h-2 w-2 relative">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
@@ -699,10 +672,10 @@
                 }
 
                 if (isCurrentSelected) {
-                    btn.className = "category-item-btn p-3 bg-indigo-50 border-2 border-indigo-600 rounded-xl transition-all duration-200 text-left flex items-center space-x-3 text-xs sm:text-sm font-bold glow-active group relative overflow-hidden text-indigo-950 shadow-sm";
+                    btn.className = "category-item-btn p-4 bg-indigo-50 border-2 border-indigo-600 rounded-xl transition-all duration-200 text-left flex items-center space-x-4 text-xs sm:text-sm font-bold glow-active group relative overflow-hidden text-indigo-950 shadow-sm";
                     indicator.classList.remove('hidden');
                 } else {
-                    btn.className = "category-item-btn p-3 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl transition-all duration-200 text-left flex items-center space-x-3 text-xs sm:text-sm font-semibold relative overflow-hidden group text-slate-700 shadow-sm";
+                    btn.className = "category-item-btn p-4 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl transition-all duration-200 text-left flex items-center space-x-4 text-xs sm:text-sm font-semibold relative overflow-hidden group text-slate-700 shadow-sm";
                     indicator.classList.add('hidden');
                 }
             });
@@ -750,8 +723,9 @@
             document.getElementById('prev-btn').disabled = (currentTabIdx === 0);
             const nextBtn = document.getElementById('next-btn');
             if (currentTabIdx === 5) {
-                nextBtn.innerHTML = `바로 프롬프트 만들기 🪄`;
-                nextBtn.className = "px-4 py-2 text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition duration-200 shadow-md shadow-emerald-500/20";
+                // Modified flow - Final step displays "프롬프트 생성하기" that directly triggers output compile
+                nextBtn.innerHTML = `프롬프트 생성하기 🪄`;
+                nextBtn.className = "px-5 py-2 text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition duration-200 shadow-md shadow-indigo-500/20";
             } else {
                 nextBtn.innerHTML = `다음 단계 <i class="fa-solid fa-chevron-right ml-1.5"></i>`;
                 nextBtn.className = "px-4 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition duration-200 shadow-md shadow-indigo-500/10";
@@ -781,21 +755,6 @@
 
             document.querySelectorAll('.who-grid').forEach(grid => grid.classList.add('hidden'));
             document.getElementById(`grid-${subKey}`).classList.remove('hidden');
-        }
-
-        // Ratio Setter
-        function setRatio(ratioStr) {
-            currentRatio = ratioStr;
-            document.querySelectorAll('.ratio-btn').forEach(btn => {
-                btn.className = "ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl";
-            });
-            
-            const selectedBtnId = `ratio-${ratioStr.replace(':', '-')}`;
-            const targetBtn = document.getElementById(selectedBtnId);
-            if (targetBtn) {
-                targetBtn.className = "ratio-btn py-2 bg-indigo-50 border-2 border-indigo-600 text-indigo-700 rounded-xl font-bold";
-            }
-            updatePromptDisplay();
         }
 
         // Live visual prompt builder assembler (Combined draft summary)
@@ -886,11 +845,6 @@
             // 6. Style
             selected.style = data.style[Math.floor(Math.random() * data.style.length)];
 
-            // Pick a random Aspect Ratio
-            const ratios = ['1:1', '16:9', '9:16', '4:5'];
-            const randomRatio = ratios[Math.floor(Math.random() * ratios.length)];
-            setRatio(randomRatio);
-
             // Sync visual highlights and select active tabs automatically
             syncVisualHighlights();
 
@@ -936,7 +890,6 @@
             // Sync visuals to clear everything
             syncVisualHighlights();
             switchCategoryTab('who');
-            setRatio('1:1');
             
             // Reset terminal displays
             document.getElementById('canvas-empty-state').classList.remove('hidden');
@@ -987,36 +940,25 @@
             const interval = setInterval(() => {
                 tipIdx = (tipIdx + 1) % loadingTexts.length;
                 tipEl.innerText = loadingTexts[tipIdx];
-            }, 500);
+            }, 450);
 
             setTimeout(() => {
                 clearInterval(interval);
                 
-                // Build dynamic English prompt
+                // Build dynamic English prompt (Removed Aspect Ratios & Detail Boosters settings per request)
                 const englishWho = selected.who.map(x => x.enName).join(' and ');
                 const englishElements = selected.elements.length > 0 
-                    ? `, with detailed ${selected.elements.map(x => x.enName).join(', ')} arranged gracefully around them` 
+                    ? `, with detailed ${selected.elements.map(x => x.enName).join(', ')} arranged gracefully in the scene` 
                     : '';
-                
-                // Read booster switches
-                const boostLighting = document.getElementById('boost-lighting').checked ? ', dramatic cinematic lighting, volumetric rays, high depth' : '';
-                const boostDetail = document.getElementById('boost-detail').checked ? ', ultra-detailed 8k resolution, award-winning masterpiece composition' : '';
-                
-                // Midjourney style aspect ratios
-                let ratioText = '';
-                if (currentRatio === '16:9') ratioText = ' --ar 16:9';
-                else if (currentRatio === '9:16') ratioText = ' --ar 9:16';
-                else if (currentRatio === '4:5') ratioText = ' --ar 4:5';
-                else ratioText = ' --ar 1:1';
 
-                const englishPrompt = `${selected.style.enName} depicting ${englishWho}${englishElements}. Subject is ${selected.mood.enName}, actively ${selected.what.enName}, set dynamically ${selected.where.enName}${boostLighting}${boostDetail}${ratioText} --v 6.0`;
+                const englishPrompt = `${selected.style.enName} depicting ${englishWho}${englishElements}. Subject is ${selected.mood.enName}, actively ${selected.what.enName}, set dynamically ${selected.where.enName}, cinematic composition, masterpiece, high details, artstation trend --v 6.0`;
                 
                 // Build Korean equivalent translation for terminal review
                 const koreanWho = selected.who.map(x => x.name).join('와 ');
                 const koreanElements = selected.elements.length > 0 
                     ? `, 주변에 [ ${selected.elements.map(x => x.name).join(', ')} ] 요소를 포함` 
                     : '';
-                const koreanPrompt = `[${selected.style.name}] 화풍으로 그려진, [${selected.where.name}]에서 [${selected.mood.name}] 모습으로 [${selected.what.name}] [${koreanWho}]${koreanElements}. (비율: ${currentRatio})`;
+                const koreanPrompt = `[${selected.style.name}] 스타일로 그려진, [${selected.where.name}]에서 [${selected.mood.name}] 모습으로 [${selected.what.name}] [${koreanWho}]${koreanElements}.`;
 
                 // Display on terminals
                 document.getElementById('final-prompt-en').innerText = englishPrompt;
@@ -1032,10 +974,10 @@
                 document.getElementById('redraw-btn').disabled = false;
 
                 drawBtn.disabled = false;
-                drawBtn.innerHTML = `<i class="fa-solid fa-gears text-lg"></i> <span>최종 프롬프트 생성 🪄</span>`;
+                drawBtn.innerHTML = `<i class="fa-solid fa-gears text-lg"></i> <span>프롬프트 생성하기 🪄</span>`;
                 
                 showToast("🎉 완벽한 마스터피스 프롬프트가 제작되었습니다!");
-            }, 1200);
+            }, 1000);
         }
 
         // Safe Copy Utility using reliable fallback creation (for standard browser sandbox/iframe compatibility)
