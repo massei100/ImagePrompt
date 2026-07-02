@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Art Studio - 나만의 그림 놀이터 & 프롬프트 메이커</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc; /* Slate 50 (밝고 따뜻한 배경) */
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Glowing effects */
+        .glow-btn:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+        .glow-active {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Custom Navigation / Header -->
+    <header class="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 flex items-center justify-center animate-pulse">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">AI Art Studio</h1>
+                    <p class="text-xs text-slate-500 font-medium">상상 속 세계를 명품 프롬프트로 만드는 놀이터</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="randomizeAll()" class="px-3.5 py-1.5 text-xs font-semibold bg-white hover:bg-slate-50 text-indigo-600 rounded-lg transition-all duration-200 flex items-center space-x-1.5 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-dice text-sm animate-spin-slow"></i>
+                    <span>랜덤 조합 🎲</span>
+                </button>
+                <button onclick="resetAll()" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-all duration-200 border border-slate-200 shadow-sm">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> 초기화
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Creator Palette (7 Columns) -->
+        <section class="lg:col-span-7 flex flex-col space-y-6">
+            
+            <!-- STEP-BY-STEP NAVIGATOR (Horizontal scroll on small screens) -->
+            <div class="bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm flex space-x-1 overflow-x-auto">
+                <button onclick="switchCategoryTab('who')" id="tab-who" class="cat-tab flex-1 min-w-[85px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all flex flex-col items-center gap-1">
+                    <span class="text-lg">🦸‍♂️</span>
+                    <span>1. 누가</span>
+                </button>
+                <button onclick="switchCategoryTab('where')" id="tab-where" class="cat-tab flex-1 min-w-[85px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all flex flex-col items-center gap-1">
+                    <span class="text-lg">⛰️</span>
+                    <span>2. 어디서</span>
+                </button>
+                <button onclick="switchCategoryTab('what')" id="tab-what" class="cat-tab flex-1 min-w-[85px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all flex flex-col items-center gap-1">
+                    <span class="text-lg">🏃‍♂️</span>
+                    <span>3. 무엇을</span>
+                </button>
+                <button onclick="switchCategoryTab('mood')" id="tab-mood" class="cat-tab flex-1 min-w-[85px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all flex flex-col items-center gap-1">
+                    <span class="text-lg">🥰</span>
+                    <span>4. 감정/모습</span>
+                </button>
+                <button onclick="switchCategoryTab('elements')" id="tab-elements" class="cat-tab flex-1 min-w-[85px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all flex flex-col items-center gap-1">
+                    <span class="text-lg">⭐</span>
+                    <span>5. 요소 추가</span>
+                </button>
+                <button onclick="switchCategoryTab('style')" id="tab-style" class="cat-tab flex-1 min-w-[85px] py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all flex flex-col items-center gap-1">
+                    <span class="text-lg">🎨</span>
+                    <span>6. 스타일</span>
+                </button>
+            </div>
+
+            <!-- TAB CONTENT CONTAINER -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-md flex-grow flex flex-col min-h-[420px]">
+                
+                <!-- 1. WHO CATEGORY (WITH SUBCATEGORIES, MULTI-SELECT) -->
+                <div id="panel-who" class="tab-panel hidden flex-col flex-grow">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="text-indigo-600">Step 1.</span> 누구를 그릴까요? <span class="text-[10px] font-semibold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full">복수 선택 가능 👥</span>
+                        </h3>
+                        <span id="badge-who" class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-medium border border-indigo-100">미선택</span>
+                    </div>
+
+                    <!-- Who Subcategories Selector -->
+                    <div class="grid grid-cols-3 gap-1.5 mb-5 p-1 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold">
+                        <button onclick="switchWhoSub('people')" id="subtab-people" class="who-subtab py-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white transition-all">🧑‍🚀 인물 (20)</button>
+                        <button onclick="switchWhoSub('animals')" id="subtab-animals" class="who-subtab py-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white transition-all">🐱 동물 (20)</button>
+                        <button onclick="switchWhoSub('robots')" id="subtab-robots" class="who-subtab py-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white transition-all">🤖 로봇 (20)</button>
+                    </div>
+
+                    <!-- Grid Containers for each Who-Subcategory -->
+                    <div id="grid-people" class="who-grid grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[350px] pr-1"></div>
+                    <div id="grid-animals" class="who-grid grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[350px] pr-1 hidden"></div>
+                    <div id="grid-robots" class="who-grid grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[350px] pr-1 hidden"></div>
+                </div>
+
+                <!-- 2. WHERE CATEGORY -->
+                <div id="panel-where" class="tab-panel hidden flex-col flex-grow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="text-indigo-600">Step 2.</span> 배경 장소는 어디인가요?
+                        </h3>
+                        <span id="badge-where" class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-medium border border-indigo-100">미선택</span>
+                    </div>
+                    <div id="grid-where" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[420px] pr-1"></div>
+                </div>
+
+                <!-- 3. WHAT CATEGORY -->
+                <div id="panel-what" class="tab-panel hidden flex-col flex-grow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="text-indigo-600">Step 3.</span> 무엇을 하고 있나요?
+                        </h3>
+                        <span id="badge-what" class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-medium border border-indigo-100">미선택</span>
+                    </div>
+                    <div id="grid-what" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[420px] pr-1"></div>
+                </div>
+
+                <!-- 4. MOOD CATEGORY -->
+                <div id="panel-mood" class="tab-panel hidden flex-col flex-grow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="text-indigo-600">Step 4.</span> 주인공의 감정이나 상태는 어떤가요?
+                        </h3>
+                        <span id="badge-mood" class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-medium border border-indigo-100">미선택</span>
+                    </div>
+                    <div id="grid-mood" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[420px] pr-1"></div>
+                </div>
+
+                <!-- 5. ELEMENTS CATEGORY (MULTI-SELECT) -->
+                <div id="panel-elements" class="tab-panel hidden flex-col flex-grow">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="text-indigo-600">Step 5.</span> 추가할 주변 요소가 있나요? <span class="text-[10px] font-semibold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full">복수 선택 가능 🌸</span>
+                        </h3>
+                        <span id="badge-elements" class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-medium border border-indigo-100">미선택</span>
+                    </div>
+                    <div id="grid-elements" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[420px] pr-1"></div>
+                </div>
+
+                <!-- 6. STYLE CATEGORY -->
+                <div id="panel-style" class="tab-panel hidden flex-col flex-grow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="text-indigo-600">Step 6.</span> 어떤 그림 스타일로 그릴까요?
+                        </h3>
+                        <span id="badge-style" class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-medium border border-indigo-100">미선택</span>
+                    </div>
+                    <div id="grid-style" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 overflow-y-auto max-h-[420px] pr-1"></div>
+                </div>
+
+                <!-- Progress Control Box inside panels -->
+                <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
+                    <button id="prev-btn" onclick="navigateStep(-1)" class="px-4 py-2 text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition duration-200 disabled:opacity-35 disabled:pointer-events-none shadow-sm">
+                        <i class="fa-solid fa-chevron-left mr-1.5"></i> 이전 단계
+                    </button>
+                    <div class="flex items-center space-x-1.5 text-slate-300">
+                        <span id="dot-0" class="w-2 h-2 rounded-full bg-slate-200"></span>
+                        <span id="dot-1" class="w-2 h-2 rounded-full bg-slate-200"></span>
+                        <span id="dot-2" class="w-2 h-2 rounded-full bg-slate-200"></span>
+                        <span id="dot-3" class="w-2 h-2 rounded-full bg-slate-200"></span>
+                        <span id="dot-4" class="w-2 h-2 rounded-full bg-slate-200"></span>
+                        <span id="dot-5" class="w-2 h-2 rounded-full bg-slate-200"></span>
+                    </div>
+                    <button id="next-btn" onclick="navigateStep(1)" class="px-4 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition duration-200 shadow-md shadow-indigo-500/10">
+                        다음 단계 <i class="fa-solid fa-chevron-right ml-1.5"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Right Column: AI Prompt Station (5 Columns) -->
+        <section class="lg:col-span-5 flex flex-col space-y-6">
+            
+            <!-- Live Combination Progress Summary Box -->
+            <div class="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2.5">
+                    <h4 class="text-xs font-bold text-indigo-600 tracking-wider uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> 현재 조합 요약
+                    </h4>
+                    <span class="text-[10px] text-slate-400 font-medium">선택 사항이 실시간 결합됩니다</span>
+                </div>
+                
+                <div class="min-h-[60px] flex items-center">
+                    <p id="combined-prompt-text" class="text-xs leading-relaxed text-slate-500 font-medium">
+                        좌측 메뉴 버튼들을 클릭하여 나만의 유니크한 조합을 선택해 보세요!
+                    </p>
+                </div>
+
+                <!-- Missing configuration hint -->
+                <div id="missing-alert" class="mt-3 flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span id="missing-alert-text">기초 요소를 고르면 프롬프트 제조가 가능해집니다.</span>
+                </div>
+            </div>
+
+            <!-- AI Prompt Generator Options Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                <h4 class="text-xs font-bold text-slate-700 tracking-wider uppercase flex items-center gap-1.5 border-b border-slate-100 pb-2.5">
+                    <i class="fa-solid fa-sliders"></i> 생성 옵션 & 비율 설정
+                </h4>
+                
+                <!-- Aspect Ratio Selector -->
+                <div>
+                    <span class="text-xs font-bold text-slate-500 block mb-2">종횡비 (Aspect Ratio)</span>
+                    <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold">
+                        <button onclick="setRatio('1:1')" id="ratio-1-1" class="ratio-btn py-2 bg-indigo-50 border-2 border-indigo-600 text-indigo-700 rounded-xl">1:1 Square</button>
+                        <button onclick="setRatio('16:9')" id="ratio-16-9" class="ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl">16:9 Wide</button>
+                        <button onclick="setRatio('9:16')" id="ratio-9-16" class="ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl">9:16 Port.</button>
+                        <button onclick="setRatio('4:5')" id="ratio-4-5" class="ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl">4:5 Social</button>
+                    </div>
+                </div>
+
+                <!-- Style Detail Boosters -->
+                <div>
+                    <span class="text-xs font-bold text-slate-500 block mb-2">디테일 부스터 추가</span>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" id="boost-lighting" onchange="updatePromptDisplay()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" checked>
+                            <span class="font-medium text-slate-600">영화적 드라마틱 조명</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" id="boost-detail" onchange="updatePromptDisplay()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" checked>
+                            <span class="font-medium text-slate-600">8K 초고화질 디테일</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Prompt Terminal Display Card -->
+            <div class="bg-slate-900 border border-slate-950 rounded-2xl overflow-hidden shadow-lg flex flex-col">
+                
+                <!-- Terminal Screen / Viewport -->
+                <div class="relative min-h-[280px] bg-slate-950 flex flex-col p-5">
+                    
+                    <!-- Top Window bar decoration -->
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                        <div class="flex items-center space-x-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        </div>
+                        <span class="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-wider">AI Prompt Terminal v1.2</span>
+                    </div>
+
+                    <!-- Static Empty State -->
+                    <div id="canvas-empty-state" class="flex-grow flex flex-col items-center justify-center space-y-4 text-center">
+                        <div class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 text-2xl">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400">조합을 설정한 후 프롬프트 생성 버튼을 누르세요</p>
+                            <p class="text-[10px] text-slate-600 mt-1">Midjourney, DALL-E 3 등 모든 모델에 즉시 사용 가능</p>
+                        </div>
+                    </div>
+
+                    <!-- Rendering / Loading Animation -->
+                    <div id="canvas-loading-state" class="hidden flex-grow flex flex-col items-center justify-center space-y-4">
+                        <div class="relative flex items-center justify-center">
+                            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                            <div class="absolute text-indigo-400 text-xs">
+                                <i class="fa-solid fa-wand-magic-sparkles animate-pulse"></i>
+                            </div>
+                        </div>
+                        <p id="loading-tip" class="text-xs font-mono text-indigo-300 font-medium">마법 단어 정밀 조율 중...</p>
+                    </div>
+
+                    <!-- Displaying Result Codes / Prompts -->
+                    <div id="canvas-result-state" class="hidden flex-col flex-grow space-y-4 font-mono text-left">
+                        
+                        <!-- English Prompt Container -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-globe mr-1"></i> English Master Prompt</span>
+                                <button onclick="copyPrompt('en')" class="text-[10px] bg-indigo-950 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 px-2 py-1 rounded transition flex items-center gap-1">
+                                    <i class="fa-regular fa-copy"></i> 복사하기
+                                </button>
+                            </div>
+                            <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 max-h-[110px] overflow-y-auto">
+                                <p id="final-prompt-en" class="text-xs text-indigo-200 leading-relaxed font-mono select-all break-words"></p>
+                            </div>
+                        </div>
+
+                        <!-- Korean Prompt Container -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] text-teal-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-language mr-1"></i> Korean Prompt (번역 대조)</span>
+                                <button onclick="copyPrompt('ko')" class="text-[10px] bg-teal-950 hover:bg-teal-900 border border-teal-800 text-teal-300 px-2 py-1 rounded transition flex items-center gap-1">
+                                    <i class="fa-regular fa-copy"></i> 복사하기
+                                </button>
+                            </div>
+                            <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-3 max-h-[90px] overflow-y-auto">
+                                <p id="final-prompt-ko" class="text-xs text-teal-200 leading-relaxed font-mono select-all break-words"></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Main Trigger Button Bar -->
+                <div class="p-4 bg-slate-950 space-y-3 border-t border-slate-900">
+                    
+                    <!-- Main Draw / Prompt Builder Trigger -->
+                    <button id="draw-btn" onclick="generateArt()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-base rounded-xl transition duration-300 shadow-lg shadow-indigo-600/20 flex items-center justify-center space-x-2.5 glow-btn">
+                        <i class="fa-solid fa-gears text-lg"></i>
+                        <span>최종 프롬프트 생성 🪄</span>
+                    </button>
+
+                    <!-- Auxiliary Actions -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="download-btn" onclick="copyPrompt('en')" disabled class="py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-slate-900 text-slate-300 font-semibold text-xs rounded-xl transition duration-200 flex items-center justify-center space-x-2 border border-slate-800">
+                            <i class="fa-regular fa-clipboard text-slate-400"></i>
+                            <span>영문 복사 📋</span>
+                        </button>
+                        <button id="redraw-btn" onclick="generateArt()" disabled class="py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-slate-900 text-slate-300 font-semibold text-xs rounded-xl transition duration-200 flex items-center justify-center space-x-2 border border-slate-800">
+                            <i class="fa-solid fa-rotate mr-0.5 text-slate-400"></i>
+                            <span>프롬프트 재생성 🔄</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Global Toast Notification Modal -->
+    <div id="toast-box" class="fixed top-20 right-4 z-50 transform translate-x-96 transition-all duration-300 ease-out pointer-events-none">
+        <div class="bg-white border border-indigo-200 shadow-2xl p-4 rounded-xl flex items-center space-x-3 max-w-sm">
+            <div id="toast-icon-bg" class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                <i id="toast-icon" class="fa-solid fa-bell"></i>
+            </div>
+            <div>
+                <p id="toast-message" class="text-xs font-semibold text-slate-800 leading-snug">알림 내용이 노출됩니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Setup State variables
+        const categories = ['who', 'where', 'what', 'mood', 'elements', 'style'];
+        let currentTabIdx = 0;
+        let currentWhoSub = 'people';
+        let currentRatio = '1:1';
+
+        // Selected Elements State (Who and Elements support Multi-selection)
+        const selected = {
+            who: [],       // Array
+            where: null,   // Single Object
+            what: null,    // Single Object
+            mood: null,    // Single Object
+            elements: [],  // Array
+            style: null    // Single Object
+        };
+
+        // Complete Dataset Definitions (20 items for who subgroups, where, what, elements; 15 for mood, style)
+        const data = {
+            who: {
+                people: [
+                    { id: 'p1', emoji: '🧑‍🚀', name: '우주비행사', enName: 'an astronaut' },
+                    { id: 'p2', emoji: '🧙‍♂️', name: '마법사', enName: 'a powerful wizard' },
+                    { id: 'p3', emoji: '🧑‍🍳', name: '요리사', enName: 'a master chef' },
+                    { id: 'p4', emoji: '👧', name: '어린아이', enName: 'a young cheerful child' },
+                    { id: 'p5', emoji: '🕵️‍♂️', name: '탐정', enName: 'a mysterious detective' },
+                    { id: 'p6', emoji: '🧑‍🚒', name: '소방관', enName: 'a brave firefighter' },
+                    { id: 'p7', emoji: '👑', name: '왕/여왕', enName: 'a royal monarch' },
+                    { id: 'p8', emoji: '🎨', name: '화가', enName: 'a passionate painter' },
+                    { id: 'p9', emoji: '🦸‍♂️', name: '슈퍼히어로', enName: 'a legendary superhero' },
+                    { id: 'p10', emoji: '🧑‍🌾', name: '농부', enName: 'a hard-working farmer' },
+                    { id: 'p11', emoji: '🧭', name: '모험가', enName: 'a daring adventurer' },
+                    { id: 'p12', emoji: '🥷', name: '닌자', enName: 'a stealthy shadow ninja' },
+                    { id: 'p13', emoji: '🤠', name: '카우보이', enName: 'a rugged cowboy' },
+                    { id: 'p14', emoji: '🧚‍♀️', name: '요정', enName: 'a magical tiny fairy' },
+                    { id: 'p15', emoji: '🏴‍☠️', name: '해적', enName: 'a bold pirate captain' },
+                    { id: 'p16', emoji: '🩰', name: '발레리나', enName: 'a delicate ballerina' },
+                    { id: 'p17', emoji: '🎻', name: '바이올리니스트', enName: 'a classical violinist' },
+                    { id: 'p18', emoji: '🛡️', name: '중세 기사', enName: 'a heroic medieval knight' },
+                    { id: 'p19', emoji: '🤿', name: '잠수부', enName: 'a deep-sea diver' },
+                    { id: 'p20', emoji: '🩺', name: '의사', enName: 'a kind doctor' }
+                ],
+                animals: [
+                    { id: 'a1', emoji: '🐱', name: '고양이', enName: 'a fluffy cute cat' },
+                    { id: 'a2', emoji: '🐶', name: '강아지', enName: 'a playful puppy dog' },
+                    { id: 'a3', emoji: '🐼', name: '판다', enName: 'a cute giant panda' },
+                    { id: 'a4', emoji: '🦊', name: '여우', enName: 'a clever red fox' },
+                    { id: 'a5', emoji: '🦁', name: '사자', enName: 'a majestic golden lion' },
+                    { id: 'a6', emoji: '🐰', name: '토끼', enName: 'a tiny bunny rabbit' },
+                    { id: 'a7', emoji: '🐻', name: '곰', enName: 'a friendly brown bear' },
+                    { id: 'a8', emoji: ' owls', emoji: '🦉', name: '부엉이', enName: 'a wise forest owl' },
+                    { id: 'a9', emoji: '🐬', name: '돌고래', enName: 'a happy ocean dolphin' },
+                    { id: 'a10', emoji: '🐉', name: '용', enName: 'a mythical friendly dragon' },
+                    { id: 'a11', emoji: '🐯', name: '호랑이', enName: 'a fierce striped tiger' },
+                    { id: 'a12', emoji: '🐿️', name: '다람쥐', enName: 'a busy little squirrel' },
+                    { id: 'a13', emoji: '🐧', name: '펭귄', enName: 'a cute waddling penguin' },
+                    { id: 'a14', emoji: '🐨', name: '코알라', enName: 'a sleepy grey koala' },
+                    { id: 'a15', emoji: '🦌', name: '사슴', enName: 'a gentle deer' },
+                    { id: 'a16', emoji: '🦄', name: '유니콘', enName: 'a shining white unicorn' },
+                    { id: 'a17', emoji: '🐘', name: '아기코끼리', enName: 'a playful baby elephant' },
+                    { id: 'a18', emoji: '🐒', name: '원숭이', enName: 'a clever monkey' },
+                    { id: 'a19', emoji: '🐹', name: '햄스터', enName: 'a tiny fat hamster' },
+                    { id: 'a20', emoji: '🦦', name: '수달', enName: 'a happy floating otter' }
+                ],
+                robots: [
+                    { id: 'r1', emoji: '🤖', name: '귀여운 로봇', enName: 'a friendly little robot' },
+                    { id: 'r2', emoji: '🦾', name: '안드로이드', enName: 'a sleek bionic android' },
+                    { id: 'r3', emoji: '🦿', name: '거대 로봇', enName: 'a giant mechanical robot' },
+                    { id: 'r4', emoji: '🛸', name: '미래형 드론', enName: 'a high-tech hovering drone' },
+                    { id: 'r5', emoji: '📟', name: '태엽 로봇', enName: 'a retro tin clockwork robot' },
+                    { id: 'r6', emoji: '🐕', name: '로봇 강아지', enName: 'a futuristic metal robot dog' },
+                    { id: 'r7', emoji: '🧹', name: '청소 로봇', enName: 'a smart automated cleaning robot' },
+                    { id: 'r8', emoji: '⚙️', name: '기계 조수', enName: 'a gears-and-cogs workshop assistant' },
+                    { id: 'r9', emoji: '🚀', name: '사이보그', enName: 'a half-human high-tech cyborg' },
+                    { id: 'r10', emoji: '🌌', name: 'AI 홀로그램', enName: 'a glowing digital AI hologram' },
+                    { id: 'r11', emoji: '🐙', name: '해저 탐사용', enName: 'an underwater explorer robot' },
+                    { id: 'r12', emoji: '🛰️', name: '우주선 AI', enName: 'a sleek spaceship AI interface' },
+                    { id: 'r13', emoji: '🦋', name: '기계 나비', enName: 'a delicate mechanical butterfly robot' },
+                    { id: 'r14', emoji: '🕷️', name: '스파이더봇', enName: 'a multi-legged spider robot' },
+                    { id: 'r15', emoji: '🍳', name: '요리 보조봇', enName: 'a chef helper culinary robot' },
+                    { id: 'r16', emoji: '📦', name: '배달 로봇', enName: 'an autonomous delivery robot' },
+                    { id: 'r17', emoji: '🎹', name: '연주가 로봇', enName: 'a piano-playing android' },
+                    { id: 'r18', emoji: '⚔️', name: '메카 전사', enName: 'a futuristic giant mecha warrior' },
+                    { id: 'r19', emoji: '🪰', name: '나노로봇 군집', enName: 'a swarm of glowing nanobots' },
+                    { id: 'r20', emoji: '🌿', name: '가드닝 로봇', enName: 'a gardener bio-robot' }
+                ]
+            },
+            where: [
+                { id: 'w1', emoji: '⛰️', name: '높은 산', enName: 'on top of a high misty mountain peak' },
+                { id: 'w2', emoji: '🌊', name: '바다', enName: 'in the middle of a beautiful deep blue ocean' },
+                { id: 'w3', emoji: '🏫', name: '학교 교실', enName: 'inside a sunny cozy school classroom' },
+                { id: 'w4', emoji: '🏙️', name: '도시', enName: 'at the center of a futuristic city with flying vehicles' },
+                { id: 'w5', emoji: '🛍️', name: '쇼핑몰', enName: 'inside a giant crowded modern shopping mall' },
+                { id: 'w6', emoji: '🛝', name: '놀이터 공원', enName: 'at a quiet green neighborhood park with playgrounds' },
+                { id: 'w7', emoji: '🏠', name: '아늑한 집', enName: 'inside a warm comfortable living room with a fireplace' },
+                { id: 'w8', emoji: '🍞', name: '빵가게', enName: 'inside a warm charming bakery filled with freshly baked bread' },
+                { id: 'w9', emoji: '🌌', name: '신비로운 우주', enName: 'floating in the vast deep outer space surrounded by nebula' },
+                { id: 'w10', emoji: '🪵', name: '깊은 숲속', enName: 'deep within a magical glowing enchanted forest' },
+                { id: 'w11', emoji: '🏜️', name: '사막', enName: 'in the heart of a hot endless sand desert' },
+                { id: 'w12', emoji: '☕', name: '카페', enName: 'in a modern cozy wooden cafe' },
+                { id: 'w13', emoji: '🎡', name: '놀이공원', enName: 'at a crowded carnival amusement park with a ferris wheel' },
+                { id: 'w14', emoji: '🏰', name: '고풍스러운 성', enName: 'inside a majestic grand medieval castle hall' },
+                { id: 'w15', emoji: '🧪', name: '연구소', enName: 'inside a high-tech science laboratory with glowing tubes' },
+                { id: 'w16', emoji: '🏖️', name: '해변', enName: 'on a tropical sandy beach with crystal clear waters' },
+                { id: 'w17', emoji: '🚂', name: '기차 안', enName: 'inside a vintage wood-paneled moving steam train compartment' },
+                { id: 'w18', emoji: '📚', name: '도서관', enName: 'inside a grand gothic library loaded with bookshelves' },
+                { id: 'w19', emoji: '🎸', name: '콘서트장', enName: 'on a massive concert stage under dazzling colorful stage lights' },
+                { id: 'w20', emoji: '☁️', name: '구름 위', enName: 'floating high above the sky on soft white clouds' }
+            ],
+            what: [
+                { id: 'wt1', emoji: '🍎', name: '음식을 먹는', enName: 'eating delicious foods and sweet treats' },
+                { id: 'wt2', emoji: '💃', name: '춤추는', enName: 'dancing with pure excitement and energy' },
+                { id: 'wt3', emoji: '📚', name: '책을 읽는', enName: 'focused on reading an ancient book' },
+                { id: 'wt4', emoji: '🎨', name: '그림을 그리는', enName: 'painting a colorful canvas work of art' },
+                { id: 'wt5', emoji: '💤', name: '잠을 자는', enName: 'sleeping peacefully and dreaming' },
+                { id: 'wt6', emoji: '🏃‍♂️', name: '달리는', enName: 'running at extreme speed' },
+                { id: 'wt7', emoji: '🎸', name: '악기를 연주하는', enName: 'playing a wonderful melody on an instrument' },
+                { id: 'wt8', emoji: '✈️', name: '하늘을 나는', enName: 'flying freely and soaring in the air' },
+                { id: 'wt9', emoji: '📸', name: '사진 찍는', enName: 'capturing photos with a professional camera' },
+                { id: 'wt10', emoji: '🎣', name: '낚시하는', enName: 'quietly fishing on calm water' },
+                { id: 'wt11', emoji: '💻', name: '코딩하는', enName: 'coding furiously on a glowing holographic screen' },
+                { id: 'wt12', emoji: '🧗‍♂️', name: '벽을 오르는', enName: 'boldly climbing a steep structure' },
+                { id: 'wt13', emoji: '🪄', name: '마법을 부리는', enName: 'casting a magical spell with particles of starlight' },
+                { id: 'wt14', emoji: '⚽', name: '축구하는', enName: 'playing a high-stakes competitive soccer game' },
+                { id: 'wt15', emoji: '☕', name: '차 마시는', enName: 'sipping a warm hot tea' },
+                { id: 'wt16', emoji: '🪴', name: '화초 가꾸는', enName: 'gardening and watering beautiful flowers' },
+                { id: 'wt17', emoji: '🫧', name: '비누방울을 부는', enName: 'blowing delicate iridescent shimmering bubbles' },
+                { id: 'wt18', emoji: '🤹', name: '저글링하는', enName: 'expertly juggling colorful glowing spheres' },
+                { id: 'wt19', emoji: '🔍', name: '추리하는', enName: 'investigating and inspecting a clue with a magnifying glass' },
+                { id: 'wt20', emoji: '🤝', name: '악수하는', enName: 'shaking hands with a warm smile' }
+            ],
+            mood: [
+                { id: 'm1', emoji: '🥰', name: '귀여운', enName: 'in a super cute, lovely, and adorable style' },
+                { id: 'm2', emoji: '😄', name: '행복한', enName: 'expressing absolute happiness and radiant joy' },
+                { id: 'm3', emoji: '😢', name: '슬픈', enName: 'with a crying, melancholic, and deeply sad look' },
+                { id: 'm4', emoji: '🎉', name: '즐거운', enName: 'with a festive, energetic, and cheering mood' },
+                { id: 'm5', emoji: '🥳', name: '신나는', enName: 'looking incredibly excited, thrilled, and animated' },
+                { id: 'm6', emoji: '😡', name: '화나는', enName: 'making an angry, hilarious cartoon pout face' },
+                { id: 'm7', emoji: '🫣', name: '쑥스러운', enName: 'looking shy, blushing, and bashful' },
+                { id: 'm8', emoji: '🧐', name: '호기심 가득한', enName: 'filled with curiosity and exploration' },
+                { id: 'm9', emoji: '😎', name: '멋진', enName: 'looking stylish, cool, and extremely confident' },
+                { id: 'm10', emoji: '🥱', name: '졸린', enName: 'looking cozy, sleepy, and yawning softly' },
+                { id: 'm11', emoji: '😱', name: '놀란', enName: 'looking totally shocked and extremely surprised' },
+                { id: 'm12', emoji: '🤔', name: '고민하는', enName: 'thoughtful, serious, and deeply pondering' },
+                { id: 'm13', emoji: '🌟', name: '반짝반짝 빛나는', enName: 'surrounded by sparkling stars and glowing particles' },
+                { id: 'm14', emoji: '👻', name: '으스스한', enName: 'surrounded by spooky, ghostly, and mysterious atmosphere' },
+                { id: 'm15', emoji: '✨', name: '신비로운', enName: 'radiating a dreamlike, mystical, and ethereal aura' }
+            ],
+            elements: [
+                { id: 'e1', emoji: '⭐', name: '반짝이는 별', enName: 'twinkling golden stars' },
+                { id: 'e2', emoji: '🌈', name: '무지개', enName: 'a beautiful bright colorful rainbow' },
+                { id: 'e3', emoji: '🍄', name: '마법 버섯', enName: 'glowing bioluminescent magical mushrooms' },
+                { id: 'e4', emoji: '🌸', name: '벚꽃 나무', enName: 'blooming pink cherry blossom branches' },
+                { id: 'e5', emoji: '🪔', name: '빈티지 램프', enName: 'an antique brass lamp casting warm light' },
+                { id: 'e6', emoji: '🛋️', name: '푹신한 소파', enName: 'a cozy soft velvet sofa' },
+                { id: 'e7', emoji: '☕', name: '따뜻한 찻잔', enName: 'a steaming hot cup of porcelain tea' },
+                { id: 'e8', emoji: '🧳', name: '보물 상자', enName: 'an ancient wooden treasure chest' },
+                { id: 'e9', emoji: '🔮', name: '신비로운 수정', enName: 'a glowing magical crystal cluster' },
+                { id: 'e10', emoji: '🌹', name: '장미 꽃다발', enName: 'a fresh bouquet of crimson red roses' },
+                { id: 'e11', emoji: '🪴', name: '초록 화분', enName: 'lush green monstera potted plants' },
+                { id: 'e12', emoji: '🪑', name: '흔들 의자', enName: 'a rustic wooden rocking chair' },
+                { id: 'e13', emoji: '🧹', name: '마법 양탄자', enName: 'a floating patterned flying carpet' },
+                { id: 'e14', emoji: '👑', name: '보석 왕관', enName: 'a glittering golden crown embedded with diamonds' },
+                { id: 'e15', emoji: '🫧', name: '비누방울', enName: 'floating iridescent shimmering soap bubbles' },
+                { id: 'e16', emoji: '🍁', name: '단풍잎', enName: 'scattered warm autumn orange maple leaves' },
+                { id: 'e17', emoji: '🕯️', name: '은은한 촛대', enName: 'a lit antique candelabra with melting wax' },
+                { id: 'e18', emoji: '⛺', name: '아늑한 텐트', enName: 'a lit canvas camping tent' },
+                { id: 'e19', emoji: '🌿', name: '덩굴 이파리', enName: 'hanging green ivy leaf vines' },
+                { id: 'e20', emoji: '💖', name: '하트 하트', enName: 'floating pink love heart icons' }
+            ],
+            style: [
+                { id: 's1', emoji: '🎨', name: '수채화', enName: 'Warm watercolor painting, soft pastel blend, high artistic detail' },
+                { id: 's2', emoji: '✏️', name: '연필 스케치', enName: 'Detailed charcoal pencil sketch drawing, fine shading, handdrawn textures' },
+                { id: 's3', emoji: '🇯🇵', name: '애니메이션', enName: 'Vibrant modern anime art style, studio key visual, highly detailed anime' },
+                { id: 's4', emoji: '🧸', name: '클레이 아트', enName: 'Charming 3D claymation style, cute smooth plasticine sculpture render' },
+                { id: 's5', emoji: '🖼️', name: '유화', enName: 'Classic thick oil painting, realistic canvas impasto textures, deep brush strokes' },
+                { id: 's6', emoji: '👾', name: '픽셀 아트', enName: 'Retro 16-bit cute pixel art illustration, nostalgic video game aesthetic' },
+                { id: 's7', emoji: '🖍️', name: '크레파스', enName: 'Cute childish crayon drawing style, warm colored pencil textures' },
+                { id: 's8', emoji: '🌟', name: '사이버펑크', enName: 'Futuristic sci-fi cyberpunk art style, neon glow lights, cinematic synthwave' },
+                { id: 's9', emoji: '📜', name: '수묵화', enName: 'Traditional elegant brush ink wash landscape art, minimalist calligraphy style' },
+                { id: 's10', emoji: '🍿', name: '미국 만화', enName: 'Vintage retro American pop art comic book style, bold ink lines, halftone shading' },
+                { id: 's11', emoji: '🧚‍♀️', name: '판타지 일러스트', enName: 'Dreamlike magical fantasy illustration, whimsical digital art, soft glowing lighting' },
+                { id: 's12', emoji: '📐', name: '3D 렌더링', enName: 'Sleek modern 3D digital render, realistic octane render, smooth glossy textures' },
+                { id: 's13', emoji: '🧵', name: '자수 공예', enName: 'Intricate hand-stitched colorful embroidery art, detailed sewing textile texture' },
+                { id: 's14', emoji: '🕶️', name: '필름 느와르', enName: 'Cinematic retro film noir aesthetic, high contrast dramatic shadows, moody atmosphere' },
+                { id: 's15', emoji: '🎈', name: '페이퍼 크래프트', enName: 'Whimsical 3D layered papercut craft art, textured paper shapes, depth and shadows' }
+            ]
+        };
+
+        // Custom Toast system
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-box');
+            const toastMsg = document.getElementById('toast-message');
+            const iconBg = document.getElementById('toast-icon-bg');
+            const icon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = message;
+            if (isError) {
+                iconBg.className = "w-9 h-9 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600 shrink-0";
+                icon.className = "fa-solid fa-triangle-exclamation";
+            } else {
+                iconBg.className = "w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0";
+                icon.className = "fa-solid fa-circle-check";
+            }
+
+            toast.classList.remove('translate-x-96');
+            setTimeout(() => {
+                toast.classList.add('translate-x-96');
+            }, 3000);
+        }
+
+        // Initialize elements
+        window.addEventListener('DOMContentLoaded', () => {
+            renderGrids();
+            switchCategoryTab('who');
+            updatePromptDisplay();
+        });
+
+        // Initialize lists & render button grids
+        function renderGrids() {
+            // Who - Subcategories rendering
+            ['people', 'animals', 'robots'].forEach(subKey => {
+                const container = document.getElementById(`grid-${subKey}`);
+                container.innerHTML = '';
+                data.who[subKey].forEach(item => {
+                    const btn = createGridButton('who', item, subKey);
+                    container.appendChild(btn);
+                });
+            });
+
+            // Where
+            const whereContainer = document.getElementById('grid-where');
+            whereContainer.innerHTML = '';
+            data.where.forEach(item => {
+                const btn = createGridButton('where', item);
+                whereContainer.appendChild(btn);
+            });
+
+            // What
+            const whatContainer = document.getElementById('grid-what');
+            whatContainer.innerHTML = '';
+            data.what.forEach(item => {
+                const btn = createGridButton('what', item);
+                whatContainer.appendChild(btn);
+            });
+
+            // Mood
+            const moodContainer = document.getElementById('grid-mood');
+            moodContainer.innerHTML = '';
+            data.mood.forEach(item => {
+                const btn = createGridButton('mood', item);
+                moodContainer.appendChild(btn);
+            });
+
+            // Elements
+            const elementsContainer = document.getElementById('grid-elements');
+            elementsContainer.innerHTML = '';
+            data.elements.forEach(item => {
+                const btn = createGridButton('elements', item);
+                elementsContainer.appendChild(btn);
+            });
+
+            // Style
+            const styleContainer = document.getElementById('grid-style');
+            styleContainer.innerHTML = '';
+            data.style.forEach(item => {
+                const btn = createGridButton('style', item);
+                styleContainer.appendChild(btn);
+            });
+        }
+
+        // Standard dynamic Grid Button creation
+        function createGridButton(category, item, subKey = '') {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `category-item-btn p-3 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl transition-all duration-200 text-left flex items-center space-x-3 text-xs sm:text-sm font-semibold relative overflow-hidden group text-slate-700 shadow-sm`;
+            btn.setAttribute('data-id', item.id);
+            btn.setAttribute('data-category', category);
+            if (subKey) btn.setAttribute('data-subkey', subKey);
+
+            btn.innerHTML = `
+                <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-200">${item.emoji}</span>
+                <span class="text-slate-600 group-hover:text-slate-900 transition-colors truncate">${item.name}</span>
+                <div class="active-indicator absolute top-1.5 right-1.5 hidden">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
+                    </span>
+                </div>
+            `;
+
+            btn.onclick = () => selectItem(category, item, subKey);
+            return btn;
+        }
+
+        // Selection Controller (Supports Multi-Selection for 'who' & 'elements')
+        function selectItem(category, item, subKey = '') {
+            const isMultiSelect = (category === 'who' || category === 'elements');
+
+            if (isMultiSelect) {
+                const index = selected[category].findIndex(x => x.id === item.id);
+                if (index > -1) {
+                    selected[category].splice(index, 1); // Deselect
+                } else {
+                    selected[category].push(item); // Select
+                }
+            } else {
+                selected[category] = item;
+            }
+            
+            syncVisualHighlights();
+        }
+
+        // Synchronizes visual selections after interactive click, randomize, or reset
+        function syncVisualHighlights() {
+            document.querySelectorAll('.category-item-btn').forEach(btn => {
+                const category = btn.getAttribute('data-category');
+                const btnId = btn.getAttribute('data-id');
+                const indicator = btn.querySelector('.active-indicator');
+                
+                const isMultiSelect = (category === 'who' || category === 'elements');
+                let isCurrentSelected = false;
+
+                if (isMultiSelect) {
+                    isCurrentSelected = selected[category].some(x => x.id === btnId);
+                } else {
+                    isCurrentSelected = (selected[category] && selected[category].id === btnId);
+                }
+
+                if (isCurrentSelected) {
+                    btn.className = "category-item-btn p-3 bg-indigo-50 border-2 border-indigo-600 rounded-xl transition-all duration-200 text-left flex items-center space-x-3 text-xs sm:text-sm font-bold glow-active group relative overflow-hidden text-indigo-950 shadow-sm";
+                    indicator.classList.remove('hidden');
+                } else {
+                    btn.className = "category-item-btn p-3 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl transition-all duration-200 text-left flex items-center space-x-3 text-xs sm:text-sm font-semibold relative overflow-hidden group text-slate-700 shadow-sm";
+                    indicator.classList.add('hidden');
+                }
+            });
+
+            updateAllBadges();
+            updatePromptDisplay();
+        }
+
+        // Tab Navigation Controllers (6 stages)
+        function switchCategoryTab(tabName) {
+            currentTabIdx = categories.indexOf(tabName);
+            
+            // Visual Tab Bar Update
+            document.querySelectorAll('.cat-tab').forEach(tab => {
+                tab.classList.remove('bg-indigo-600', 'text-white', 'hover:bg-slate-100', 'glow-active', 'border', 'border-indigo-100', 'shadow-sm');
+                tab.classList.add('text-slate-500', 'hover:text-slate-800');
+            });
+            const activeTab = document.getElementById(`tab-${tabName}`);
+            activeTab.classList.remove('text-slate-500', 'hover:text-slate-800');
+            activeTab.classList.add('bg-indigo-600', 'text-white', 'glow-active', 'border', 'border-indigo-100', 'shadow-sm');
+
+            // Show proper panel
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(`panel-${tabName}`).classList.remove('hidden');
+            document.getElementById(`panel-${tabName}`).classList.add('flex');
+
+            // If "who" tab, manage its active subcategory
+            if (tabName === 'who') {
+                switchWhoSub(currentWhoSub);
+            }
+
+            // Setup step dot visual
+            for (let i = 0; i < 6; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === currentTabIdx) {
+                    dot.className = "w-3 h-3 rounded-full bg-indigo-600 transition-all duration-200 shadow-md shadow-indigo-500/35 scale-110";
+                } else if (i < currentTabIdx) {
+                    dot.className = "w-2 h-2 rounded-full bg-indigo-300 transition-all duration-200";
+                } else {
+                    dot.className = "w-2 h-2 rounded-full bg-slate-200 transition-all duration-200";
+                }
+            }
+
+            // Lock / Unlock Prev-Next Nav button states
+            document.getElementById('prev-btn').disabled = (currentTabIdx === 0);
+            const nextBtn = document.getElementById('next-btn');
+            if (currentTabIdx === 5) {
+                nextBtn.innerHTML = `바로 프롬프트 만들기 🪄`;
+                nextBtn.className = "px-4 py-2 text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition duration-200 shadow-md shadow-emerald-500/20";
+            } else {
+                nextBtn.innerHTML = `다음 단계 <i class="fa-solid fa-chevron-right ml-1.5"></i>`;
+                nextBtn.className = "px-4 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition duration-200 shadow-md shadow-indigo-500/10";
+            }
+        }
+
+        function navigateStep(direction) {
+            let nextIdx = currentTabIdx + direction;
+            if (nextIdx >= 0 && nextIdx < 6) {
+                switchCategoryTab(categories[nextIdx]);
+            } else if (nextIdx === 6) {
+                // Instantly compile final prompt directly!
+                generateArt();
+            }
+        }
+
+        // "Who" subcategory panel controllers
+        function switchWhoSub(subKey) {
+            currentWhoSub = subKey;
+            document.querySelectorAll('.who-subtab').forEach(tab => {
+                tab.classList.remove('bg-indigo-50', 'text-indigo-600', 'border', 'border-indigo-100');
+                tab.classList.add('text-slate-500');
+            });
+            const activeSub = document.getElementById(`subtab-${subKey}`);
+            activeSub.classList.remove('text-slate-500');
+            activeSub.classList.add('bg-indigo-50', 'text-indigo-600', 'border', 'border-indigo-100');
+
+            document.querySelectorAll('.who-grid').forEach(grid => grid.classList.add('hidden'));
+            document.getElementById(`grid-${subKey}`).classList.remove('hidden');
+        }
+
+        // Ratio Setter
+        function setRatio(ratioStr) {
+            currentRatio = ratioStr;
+            document.querySelectorAll('.ratio-btn').forEach(btn => {
+                btn.className = "ratio-btn py-2 bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 rounded-xl";
+            });
+            
+            const selectedBtnId = `ratio-${ratioStr.replace(':', '-')}`;
+            const targetBtn = document.getElementById(selectedBtnId);
+            if (targetBtn) {
+                targetBtn.className = "ratio-btn py-2 bg-indigo-50 border-2 border-indigo-600 text-indigo-700 rounded-xl font-bold";
+            }
+            updatePromptDisplay();
+        }
+
+        // Live visual prompt builder assembler (Combined draft summary)
+        function updatePromptDisplay() {
+            const textContainer = document.getElementById('combined-prompt-text');
+            const alertBox = document.getElementById('missing-alert');
+            const alertText = document.getElementById('missing-alert-text');
+
+            const missing = [];
+            if (!selected.who || selected.who.length === 0) missing.push('누가(Step 1)');
+            if (!selected.where) missing.push('어디서(Step 2)');
+            if (!selected.what) missing.push('무엇을(Step 3)');
+            if (!selected.mood) missing.push('감정/모습(Step 4)');
+            if (!selected.style) missing.push('스타일(Step 6)');
+
+            if (missing.length > 0) {
+                // Incomplete selections
+                let whoText = selected.who.length > 0 ? selected.who.map(x => x.name).join(', ') : '주인공';
+                let elemText = selected.elements.length > 0 ? `, 주변 요소[${selected.elements.map(x => x.name).join(', ')}]` : '';
+
+                let sentenceHtml = `<span class="text-indigo-600 font-bold">[${selected.style ? selected.style.name : '화풍'}]</span> 스타일로 그려진, `;
+                sentenceHtml += `<span class="text-indigo-600 font-bold">[${selected.mood ? selected.mood.name : '상태'}]</span> 모습의 `;
+                sentenceHtml += `<span class="text-indigo-600 font-bold">[${whoText}]</span>이/가${elemText} `;
+                sentenceHtml += `<span class="text-indigo-600 font-bold">[${selected.where ? selected.where.name : '장소'}]</span>에서 `;
+                sentenceHtml += `<span class="text-indigo-600 font-bold">[${selected.what ? selected.what.name : '행동'}]</span> 모습`;
+
+                textContainer.innerHTML = sentenceHtml;
+                alertBox.classList.remove('hidden');
+                alertText.innerHTML = `아직 선택되지 않은 필수 항목: <span class="font-bold underline">${missing.join(', ')}</span>`;
+            } else {
+                // Complete selection
+                const whoNames = selected.who.map(x => `<span class="text-purple-600 font-bold">${x.name}</span>`).join('와 ');
+                const elemNames = selected.elements.length > 0 
+                    ? ` 주변에 <span class="text-emerald-600 font-bold">${selected.elements.map(x => x.name).join(', ')}</span>들을 곁들여 `
+                    : ' ';
+
+                let sentenceHtml = `🖼️ <span class="text-indigo-600 font-bold bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">${selected.style.name}</span> 스타일로 정교하게 연출된, `;
+                sentenceHtml += `<span class="text-indigo-600 font-semibold underline">${selected.where.name}</span>에서 `;
+                sentenceHtml += `<span class="text-pink-600 font-semibold">${selected.mood.name}</span> 표정과 태도로${elemNames}`;
+                sentenceHtml += `${whoNames}이/가 `;
+                sentenceHtml += `<span class="text-teal-600 font-semibold">${selected.what.name}</span> 모습`;
+
+                textContainer.innerHTML = sentenceHtml;
+                alertBox.classList.add('hidden');
+            }
+        }
+
+        // Random generator engine
+        function randomizeAll() {
+            // Reset Multi arrays first
+            selected.who = [];
+            selected.elements = [];
+
+            // 1. Who subcategory select randomly (1 to 2 random items)
+            const subcategories = ['people', 'animals', 'robots'];
+            const randomSub1 = subcategories[Math.floor(Math.random() * subcategories.length)];
+            const whoList1 = data.who[randomSub1];
+            const item1 = whoList1[Math.floor(Math.random() * whoList1.length)];
+            selected.who.push(item1);
+
+            // 50% chance to select a second hero
+            if (Math.random() > 0.5) {
+                const randomSub2 = subcategories[Math.floor(Math.random() * subcategories.length)];
+                const whoList2 = data.who[randomSub2];
+                const item2 = whoList2[Math.floor(Math.random() * whoList2.length)];
+                if (item1.id !== item2.id) {
+                    selected.who.push(item2);
+                }
+            }
+            
+            // Set sub-tab layout focus on the first item's subcategory
+            currentWhoSub = randomSub1;
+
+            // 2. Where
+            selected.where = data.where[Math.floor(Math.random() * data.where.length)];
+
+            // 3. What
+            selected.what = data.what[Math.floor(Math.random() * data.what.length)];
+
+            // 4. Mood
+            selected.mood = data.mood[Math.floor(Math.random() * data.mood.length)];
+
+            // 5. Elements (1 to 3 random items)
+            const elementCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 elements
+            const elementsShuffled = [...data.elements].sort(() => 0.5 - Math.random());
+            selected.elements = elementsShuffled.slice(0, elementCount);
+
+            // 6. Style
+            selected.style = data.style[Math.floor(Math.random() * data.style.length)];
+
+            // Pick a random Aspect Ratio
+            const ratios = ['1:1', '16:9', '9:16', '4:5'];
+            const randomRatio = ratios[Math.floor(Math.random() * ratios.length)];
+            setRatio(randomRatio);
+
+            // Sync visual highlights and select active tabs automatically
+            syncVisualHighlights();
+
+            showToast("🎲 기상천외한 랜덤 조합이 완성되었습니다!");
+            switchCategoryTab(categories[currentTabIdx]);
+        }
+
+        // Helper to update all badging visually
+        function updateAllBadges() {
+            categories.forEach(category => {
+                const badge = document.getElementById(`badge-${category}`);
+                const value = selected[category];
+                if (!badge) return;
+
+                if (Array.isArray(value)) {
+                    const count = value.length;
+                    if (count === 0) {
+                        badge.innerText = "미선택";
+                        badge.className = "text-xs px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full font-medium border border-slate-200";
+                    } else {
+                        badge.innerText = `${value[0].emoji} ${value[0].name}${count > 1 ? ` 외 ${count-1}` : ''}`;
+                        badge.className = "text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-bold border border-indigo-100";
+                    }
+                } else if (value) {
+                    badge.innerText = `${value.emoji} ${value.name}`;
+                    badge.className = "text-xs px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full font-bold border border-indigo-100";
+                } else {
+                    badge.innerText = "미선택";
+                    badge.className = "text-xs px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full font-medium border border-slate-200";
+                }
+            });
+        }
+
+        // Reset state
+        function resetAll() {
+            selected.who = [];
+            selected.where = null;
+            selected.what = null;
+            selected.mood = null;
+            selected.elements = [];
+            selected.style = null;
+
+            // Sync visuals to clear everything
+            syncVisualHighlights();
+            switchCategoryTab('who');
+            setRatio('1:1');
+            
+            // Reset terminal displays
+            document.getElementById('canvas-empty-state').classList.remove('hidden');
+            document.getElementById('canvas-loading-state').classList.add('hidden');
+            document.getElementById('canvas-result-state').classList.add('hidden');
+
+            document.getElementById('download-btn').disabled = true;
+            document.getElementById('redraw-btn').disabled = true;
+
+            showToast("선택 정보 및 터미널이 초기화되었습니다.");
+        }
+
+        // Master Prompt Generator
+        function generateArt() {
+            // Validation guard
+            const missing = [];
+            if (!selected.who || selected.who.length === 0) missing.push('누가');
+            if (!selected.where) missing.push('어디서');
+            if (!selected.what) missing.push('무엇을');
+            if (!selected.mood) missing.push('감정/모습');
+            if (!selected.style) missing.push('그림 스타일');
+
+            if (missing.length > 0) {
+                showToast(`선택되지 않은 필수 항목이 있습니다: ${missing.join(', ')}`, true);
+                const firstMissing = categories.find(cat => {
+                    if (Array.isArray(selected[cat])) {
+                        return selected[cat].length === 0;
+                    }
+                    return !selected[cat];
+                });
+                if (firstMissing) switchCategoryTab(firstMissing);
+                return;
+            }
+
+            // Setup loading state UI
+            document.getElementById('canvas-empty-state').classList.add('hidden');
+            document.getElementById('canvas-result-state').classList.add('hidden');
+            const loadingState = document.getElementById('canvas-loading-state');
+            loadingState.classList.remove('hidden');
+
+            const drawBtn = document.getElementById('draw-btn');
+            drawBtn.disabled = true;
+            drawBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>프롬프트 빌딩 및 검수 중...</span>`;
+
+            // Complete simulation animation
+            let tipIdx = 0;
+            const tipEl = document.getElementById('loading-tip');
+            const interval = setInterval(() => {
+                tipIdx = (tipIdx + 1) % loadingTexts.length;
+                tipEl.innerText = loadingTexts[tipIdx];
+            }, 500);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                
+                // Build dynamic English prompt
+                const englishWho = selected.who.map(x => x.enName).join(' and ');
+                const englishElements = selected.elements.length > 0 
+                    ? `, with detailed ${selected.elements.map(x => x.enName).join(', ')} arranged gracefully around them` 
+                    : '';
+                
+                // Read booster switches
+                const boostLighting = document.getElementById('boost-lighting').checked ? ', dramatic cinematic lighting, volumetric rays, high depth' : '';
+                const boostDetail = document.getElementById('boost-detail').checked ? ', ultra-detailed 8k resolution, award-winning masterpiece composition' : '';
+                
+                // Midjourney style aspect ratios
+                let ratioText = '';
+                if (currentRatio === '16:9') ratioText = ' --ar 16:9';
+                else if (currentRatio === '9:16') ratioText = ' --ar 9:16';
+                else if (currentRatio === '4:5') ratioText = ' --ar 4:5';
+                else ratioText = ' --ar 1:1';
+
+                const englishPrompt = `${selected.style.enName} depicting ${englishWho}${englishElements}. Subject is ${selected.mood.enName}, actively ${selected.what.enName}, set dynamically ${selected.where.enName}${boostLighting}${boostDetail}${ratioText} --v 6.0`;
+                
+                // Build Korean equivalent translation for terminal review
+                const koreanWho = selected.who.map(x => x.name).join('와 ');
+                const koreanElements = selected.elements.length > 0 
+                    ? `, 주변에 [ ${selected.elements.map(x => x.name).join(', ')} ] 요소를 포함` 
+                    : '';
+                const koreanPrompt = `[${selected.style.name}] 화풍으로 그려진, [${selected.where.name}]에서 [${selected.mood.name}] 모습으로 [${selected.what.name}] [${koreanWho}]${koreanElements}. (비율: ${currentRatio})`;
+
+                // Display on terminals
+                document.getElementById('final-prompt-en').innerText = englishPrompt;
+                document.getElementById('final-prompt-ko').innerText = koreanPrompt;
+
+                // Toggle visibility
+                loadingState.classList.add('hidden');
+                document.getElementById('canvas-result-state').classList.remove('hidden');
+                document.getElementById('canvas-result-state').classList.add('flex');
+
+                // Unlock controls
+                document.getElementById('download-btn').disabled = false;
+                document.getElementById('redraw-btn').disabled = false;
+
+                drawBtn.disabled = false;
+                drawBtn.innerHTML = `<i class="fa-solid fa-gears text-lg"></i> <span>최종 프롬프트 생성 🪄</span>`;
+                
+                showToast("🎉 완벽한 마스터피스 프롬프트가 제작되었습니다!");
+            }, 1200);
+        }
+
+        // Safe Copy Utility using reliable fallback creation (for standard browser sandbox/iframe compatibility)
+        function copyPrompt(lang) {
+            let promptText = "";
+            if (lang === 'en') {
+                promptText = document.getElementById('final-prompt-en').innerText;
+            } else {
+                promptText = document.getElementById('final-prompt-ko').innerText;
+            }
+
+            if (!promptText) {
+                showToast("복사할 프롬프트 텍스트가 존재하지 않습니다.", true);
+                return;
+            }
+
+            const textArea = document.createElement("textarea");
+            textArea.value = promptText;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast(`📋 ${lang === 'en' ? '영문' : '국문'} 프롬프트가 클립보드에 복사되었습니다!`);
+                } else {
+                    showToast("복사에 실패했습니다. 수동으로 드래그해 복사하세요.", true);
+                }
+            } catch (err) {
+                showToast("복사 도중 에러가 발생했습니다.", true);
+            }
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
