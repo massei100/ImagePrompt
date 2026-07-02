@@ -115,7 +115,7 @@
                     <div class="grid grid-cols-3 gap-1.5 mb-5 p-1 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold">
                         <button onclick="switchWhoSub('people')" id="subtab-people" class="who-subtab py-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white transition-all">🧑‍🚀 인물 (20)</button>
                         <button onclick="switchWhoSub('animals')" id="subtab-animals" class="who-subtab py-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white transition-all">🐱 동물 (20)</button>
-                        <button onclick="switchWhoSub('robots')" id="subtab-robots" class="who-subtab py-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white transition-all">🤖 로봇 (20)</button>
+                        <button onclick="switchWhoSub('robots')" id="subtab-robots" class="who-subtab py-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white transition-all">🤖 로봇 & 공룡 (14)</button>
                     </div>
 
                     <!-- Grid Containers for each Who-Subcategory -->
@@ -352,30 +352,30 @@
             style: null    // Single Object
         };
 
-        // Complete Dataset Definitions (20 items for who subgroups, where, elements; 17 for what; 15 for mood, style)
+        // Complete Dataset Definitions
         const data = {
             who: {
                 people: [
-                    { id: 'p1', emoji: '🧑‍🚀', name: '우주비행사', enName: 'an astronaut' },
-                    { id: 'p2', emoji: '🧙‍♂️', name: '마법사', enName: 'a powerful wizard' },
-                    { id: 'p3', emoji: '🧑‍🍳', name: '요리사', enName: 'a master chef' },
-                    { id: 'p4', emoji: '👧', name: '어린아이', enName: 'a young cheerful child' },
-                    { id: 'p5', emoji: '🕵️‍♂️', name: '탐정', enName: 'a mysterious detective' },
-                    { id: 'p6', emoji: '🧑‍🚒', name: '소방관', enName: 'a brave firefighter' },
-                    { id: 'p7', emoji: '👑', name: '왕/여왕', enName: 'a royal monarch' },
-                    { id: 'p8', emoji: '🎨', name: '화가', enName: 'a passionate painter' },
-                    { id: 'p9', emoji: '🦸‍♂️', name: '슈퍼히어로', enName: 'a legendary superhero' },
-                    { id: 'p10', emoji: '🧑‍🌾', name: '농부', enName: 'a hard-working farmer' },
-                    { id: 'p11', emoji: '🧭', name: '모험가', enName: 'a daring adventurer' },
-                    { id: 'p12', emoji: '🥷', name: '닌자', enName: 'a stealthy shadow ninja' },
-                    { id: 'p13', emoji: '🤠', name: '카우보이', enName: 'a rugged cowboy' },
-                    { id: 'p14', emoji: '🧚‍♀️', name: '요정', enName: 'a magical tiny fairy' },
-                    { id: 'p15', emoji: '🏴‍☠️', name: '해적', enName: 'a bold pirate captain' },
-                    { id: 'p16', emoji: '🩰', name: '발레리나', enName: 'a delicate ballerina' },
-                    { id: 'p17', emoji: '🎻', name: '바이올리니스트', enName: 'a classical violinist' },
-                    { id: 'p18', emoji: '🛡️', name: '중세 기사', enName: 'a heroic medieval knight' },
-                    { id: 'p19', emoji: '🤿', name: '잠수부', enName: 'a deep-sea diver' },
-                    { id: 'p20', emoji: '🩺', name: '의사', enName: 'a kind doctor' }
+                    { id: 'p1', emoji: '👧', name: '어린이', enName: 'a young cheerful child' },
+                    { id: 'p2', emoji: '👩', name: '엄마', enName: 'a caring loving mother' },
+                    { id: 'p3', emoji: '👨', name: '아빠', enName: 'a friendly protective father' },
+                    { id: 'p4', emoji: '👵', name: '할머니', enName: 'a kind gentle grandmother' },
+                    { id: 'p5', emoji: '👴', name: '할아버지', enName: 'a wise warm grandfather' },
+                    { id: 'p6', emoji: '🧑‍🍳', name: '요리사', enName: 'a professional master chef' },
+                    { id: 'p7', emoji: '🧑‍🏫', name: '선생님', enName: 'a friendly teacher' },
+                    { id: 'p8', emoji: '🎤', name: '가수', enName: 'a passionate famous singer' },
+                    { id: 'p9', emoji: '🧙‍♂️', name: '마법사', enName: 'a powerful magical wizard' },
+                    { id: 'p10', emoji: '🧑‍🚒', name: '소방관', enName: 'a brave heroic firefighter' },
+                    { id: 'p11', emoji: '👮', name: '경찰', enName: 'a reliable police officer' },
+                    { id: 'p12', emoji: '🧚‍♀️', name: '요정', enName: 'a magical whimsical fairy' },
+                    { id: 'p13', emoji: '🦸‍♂️', name: '슈퍼히어로', enName: 'a legendary powerful superhero' },
+                    { id: 'p14', emoji: '🎨', name: '화가', enName: 'a passionate talented painter' },
+                    { id: 'p15', emoji: '🤴', name: '왕자', enName: 'a handsome charming prince' },
+                    { id: 'p16', emoji: '👸', name: '공주', enName: 'a beautiful elegant princess' },
+                    { id: 'p17', emoji: '🧜‍♀️', name: '인어공주', enName: 'a graceful beautiful mermaid' },
+                    { id: 'p18', emoji: '🩺', name: '의사', enName: 'a kind professional doctor' },
+                    { id: 'p19', emoji: '🤿', name: '잠수부', enName: 'a brave deep-sea diver' },
+                    { id: 'p20', emoji: '🩰', name: '발레리나', enName: 'a delicate graceful ballerina' }
                 ],
                 animals: [
                     { id: 'a1', emoji: '🐱', name: '고양이', enName: 'a fluffy cute cat' },
@@ -400,26 +400,22 @@
                     { id: 'a20', emoji: '🦦', name: '수달', enName: 'a happy floating otter' }
                 ],
                 robots: [
+                    // Robots (7 items)
                     { id: 'r1', emoji: '🤖', name: '귀여운 로봇', enName: 'a friendly little robot' },
                     { id: 'r2', emoji: '🦾', name: '안드로이드', enName: 'a sleek bionic android' },
                     { id: 'r3', emoji: '🦿', name: '거대 로봇', enName: 'a giant mechanical robot' },
                     { id: 'r4', emoji: '🛸', name: '미래형 드론', enName: 'a high-tech hovering drone' },
-                    { id: 'r5', emoji: '📟', name: '태엽 로봇', enName: 'a retro tin clockwork robot' },
-                    { id: 'r6', emoji: '🐕', name: '로봇 강아지', enName: 'a futuristic metal robot dog' },
-                    { id: 'r7', emoji: '🧹', name: '청소 로봇', enName: 'a smart automated cleaning robot' },
-                    { id: 'r8', emoji: '⚙️', name: '기계 조수', enName: 'a gears-and-cogs workshop assistant' },
-                    { id: 'r9', emoji: '🚀', name: '사이보그', enName: 'a half-human high-tech cyborg' },
-                    { id: 'r10', emoji: '🌌', name: 'AI 홀로그램', enName: 'a glowing digital AI hologram' },
-                    { id: 'r11', emoji: '🐙', name: '해저 탐사용', enName: 'an underwater explorer robot' },
-                    { id: 'r12', emoji: '🛰️', name: '우주선 AI', enName: 'a sleek spaceship AI interface' },
-                    { id: 'r13', emoji: '🦋', name: '기계 나비', enName: 'a delicate mechanical butterfly robot' },
-                    { id: 'r14', emoji: '🕷️', name: '스파이더봇', enName: 'a multi-legged spider robot' },
-                    { id: 'r15', emoji: '🍳', name: '요리 보조봇', enName: 'a chef helper culinary robot' },
-                    { id: 'r16', emoji: '📦', name: '배달 로봇', enName: 'an autonomous delivery robot' },
-                    { id: 'r17', emoji: '🎹', name: '연주가 로봇', enName: 'a piano-playing android' },
-                    { id: 'r18', emoji: '⚔️', name: '메카 전사', enName: 'a futuristic giant mecha warrior' },
-                    { id: 'r19', emoji: '🪰', name: '나노로봇 군집', enName: 'a swarm of glowing nanobots' },
-                    { id: 'r20', emoji: '🌿', name: '가드닝 로봇', enName: 'a gardener bio-robot' }
+                    { id: 'r5', emoji: '🐕', name: '로봇 강아지', enName: 'a futuristic metal robot dog' },
+                    { id: 'r6', emoji: '🧹', name: '청소 로봇', enName: 'a smart automated cleaning robot' },
+                    { id: 'r7', emoji: '⚔️', name: '메카 전사', enName: 'a futuristic giant mecha warrior' },
+                    // Dinosaurs (7 items)
+                    { id: 'd1', emoji: '🦖', name: '티라노사우루스', enName: 'a fierce T-Rex dinosaur' },
+                    { id: 'd2', emoji: '🦕', name: '브라키오사우루스', enName: 'a giant Brachiosaurus dinosaur' },
+                    { id: 'd3', emoji: '🐊', name: '트리케라톱스', enName: 'a strong Triceratops dinosaur' },
+                    { id: 'd4', emoji: '🦅', name: '프테라노돈', enName: 'a flying Pteranodon dinosaur' },
+                    { id: 'd5', emoji: '🛡️', name: '안킬로사우루스', enName: 'an armored Ankylosaurus dinosaur' },
+                    { id: 'd6', emoji: '🏃', name: '벨로키라프토르', enName: 'a swift Velociraptor dinosaur' },
+                    { id: 'd7', emoji: '🌋', name: '스테고사우루스', enName: 'a spiky Stegosaurus dinosaur' }
                 ]
             },
             where: [
